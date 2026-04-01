@@ -1,0 +1,6 @@
+<!-- 404.html for GitHub Pages SPA fallback -->
+<script>
+    // Redirect all 404s to index.html for client-side routing
+    var path = location.pathname.replace(/^\/calc/, '');
+    location.replace('/calc/' + path + location.search + location.hash);
+</script>
