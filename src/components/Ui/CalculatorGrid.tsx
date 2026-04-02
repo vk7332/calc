@@ -1,6 +1,5 @@
 import { Calculator, Home, CreditCard, GraduationCap, PiggyBank, TrendingUp, Percent, DollarSign, Shield, FileText, Tag, Scale, Gavel, FileSignature, Users, Landmark, Zap, ArrowRight, Sparkles } from 'lucide-react';
 
-
 interface CalculatorGridProps {
     isDark: boolean;
     onNavigate: (page: string) => void; // Add this line
@@ -245,8 +244,7 @@ const CalculatorGrid: React.FC<CalculatorGridProps> = ({ isDark, onNavigate }) =
                             </div>
                         </div>
 
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 items-stretch">
                             {section.cards.map((card, index) => (
                                 <button
                                     key={index}

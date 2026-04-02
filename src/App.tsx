@@ -7,6 +7,10 @@ import Footer from '@/components/layout/Footer';
 import AuditPortal from '@/pages/AuditPortal';
 import InterestPortal from '@/pages/InterestPortal';
 import { ClientDatabase } from './components/layout/ClientDatabase';
+import FeedbackPage from './pages/FeedbackPage';
+import HelpPage from './pages/HelpPage';
+import AboutPage from './pages/AboutPage';
+import TotalTaxSaved from './components/Dashboard/TotalTaxSaved';
 import { LoanPortal } from './pages/LoanPortal';
 import { TaxAnalytics } from './components/layout/TaxAnalytics';
 import { SettingsPage } from './pages/SettingsPage';
@@ -26,6 +30,10 @@ function AppContent() {
 
   return (
     <div onDoubleClick={toggleTheme} className={`flex h-screen ${isDark ? 'dark bg-slate-900' : 'bg-slate-50'}`}>
+      {/* DEBUG BANNER - REMOVE IN PRODUCTION */}
+      <div style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 9999, background: '#f59e42', color: '#222', padding: '6px', fontWeight: 'bold', textAlign: 'center' }}>
+        DEBUG: currentView = {currentView}
+      </div>
       {/* Auth Modal */}
       {showAuth && <AuthModal onClose={() => setShowAuth(false)} />}
 
@@ -108,9 +116,11 @@ function AppContent() {
             {/* Loan Calculator */}
             {currentView === 'loan-calc' && <LoanPortal />}
 
+
             {/* Client Database View */}
             {currentView === 'database' && (
               <div className="space-y-6">
+                <TotalTaxSaved />
                 <div className="flex justify-between items-end">
                   <div>
                     <h2 className="text-2xl font-bold text-slate-800 dark:text-white">Client Audit Database</h2>
@@ -121,8 +131,19 @@ function AppContent() {
               </div>
             )}
 
+
             {/* Settings Page */}
             {currentView === 'settings' && <SettingsPage />}
+
+
+            {/* Feedback Page */}
+            {currentView === 'feedback' && <FeedbackPage />}
+
+            {/* Help / FAQ Page */}
+            {currentView === 'help' && <HelpPage />}
+
+            {/* About Page */}
+            {currentView === 'about' && <AboutPage />}
 
             {/* Analytics Route */}
             {currentView === 'analytics' && (

@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { ClientRecord } from '@/types/client';
-import { supabase } from '@/supabase';
+import { supabase } from '@/lib/supabase';
 import { useAuth } from './AuthContext';
 
 interface HistoryContextType {
@@ -9,12 +9,14 @@ interface HistoryContextType {
     deleteRecord: (id: string) => Promise<void>;
     clearAll: () => Promise<void>;
     searchQuery: string;
-    setSearchQuery: (query: string) => void;
+    setSearchQuery: React.Dispatch<React.SetStateAction<string>>;
     filteredClients: ClientRecord[];
     loading: boolean;
 }
 
 const HistoryContext = createContext<HistoryContextType | undefined>(undefined);
+
+// src/context/HistoryContext.tsx
 
 export const HistoryProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [clients, setClients] = useState<ClientRecord[]>([]);
@@ -22,7 +24,27 @@ export const HistoryProvider: React.FC<{ children: ReactNode }> = ({ children })
     const [loading, setLoading] = useState(true);
     const { user } = useAuth();
 
-    // Load from Supabase on startup and when user changes
+    // 1. Define the callback FIRST
+    const loadClients = useCallback(async () => {
+        if (!user) return;
+        setLoading(true);
+        try {
+            const { data, error } = await supabase
+                .from('client_records')
+                .select('*')
+                .eq('user_id', user.id)
+                .order('created_at', { ascending: false });
+
+            if (error) throw error;
+            setClients(data || []);
+        } catch (error) {
+            console.error('Error loading clients:', error);
+        } finally {
+            setLoading(false);
+        }
+    }, [user]);
+
+    // 2. Use it in the effect SECOND
     useEffect(() => {
         if (user) {
             loadClients();
@@ -32,47 +54,22 @@ export const HistoryProvider: React.FC<{ children: ReactNode }> = ({ children })
         }
     }, [user, loadClients]);
 
-    const loadClients = useCallback(async () => {
-        if (!user) return;
-
-        try {
-            setLoading(true);
-            const { data, error } = await supabase
-                .from('client_records')
-                .select('*')
-                .eq('user_id', user.id)
-                .order('last_calculated', { ascending: false });
-
-            if (error) throw error;
-
-            setClients(data || []);
-        } catch (error) {
-            console.error('Error loading clients:', error);
-        } finally {
-            setLoading(false);
-        }
-    }, [user]);
+    // ... rest of the context code ...
 
     const addRecord = async (record: Omit<ClientRecord, 'id' | 'lastCalculated'>) => {
         if (!user) return;
 
         try {
-            const newRecord: ClientRecord = {
-                ...record,
-                id: crypto.randomUUID(),
-                lastCalculated: new Date().toISOString(),
-            };
-
-            const { error } = await supabase
+            const { data, error } = await supabase
                 .from('client_records')
-                .insert({
-                    ...newRecord,
-                    user_id: user.id,
-                });
+                .insert([{ ...record, user_id: user.id }])
+                .select()
+                .single();
 
             if (error) throw error;
-
-            setClients((prev: ClientRecord[]) => [newRecord, ...prev]);
+            if (data) {
+                setClients((prev) => [data, ...prev]);
+            }
         } catch (error) {
             console.error('Error adding record:', error);
             throw error;
@@ -80,18 +77,14 @@ export const HistoryProvider: React.FC<{ children: ReactNode }> = ({ children })
     };
 
     const deleteRecord = async (id: string) => {
-        if (!user) return;
-
         try {
             const { error } = await supabase
                 .from('client_records')
                 .delete()
-                .eq('id', id)
-                .eq('user_id', user.id);
+                .eq('id', id);
 
             if (error) throw error;
-
-            setClients((prev: ClientRecord[]) => prev.filter((client: ClientRecord) => client.id !== id));
+            setClients((prev) => prev.filter((client) => client.id !== id));
         } catch (error) {
             console.error('Error deleting record:', error);
             throw error;
@@ -100,7 +93,6 @@ export const HistoryProvider: React.FC<{ children: ReactNode }> = ({ children })
 
     const clearAll = async () => {
         if (!user) return;
-
         if (!window.confirm("Are you sure you want to delete all client records?")) return;
 
         try {
@@ -110,7 +102,6 @@ export const HistoryProvider: React.FC<{ children: ReactNode }> = ({ children })
                 .eq('user_id', user.id);
 
             if (error) throw error;
-
             setClients([]);
         } catch (error) {
             console.error('Error clearing records:', error);
@@ -135,7 +126,7 @@ export const HistoryProvider: React.FC<{ children: ReactNode }> = ({ children })
 
 export const useHistory = () => {
     const context = useContext(HistoryContext);
-    if (!context) {
+    if (context === undefined) {
         throw new Error('useHistory must be used within a HistoryProvider');
     }
     return context;

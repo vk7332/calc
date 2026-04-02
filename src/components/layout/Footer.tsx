@@ -75,7 +75,7 @@ export default function Footer() {
                   </div>
                   <div>
                     <div className="text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-1">Call Support</div>
-                    <div className="text-sm font-bold text-white group-hover:text-blue-400 transition-colors tracking-tight">+91 98765 43210</div>
+                    <div className="text-sm font-bold text-white group-hover:text-blue-400 transition-colors tracking-tight">+91 70180 64385</div>
                   </div>
                 </div>
               </div>

@@ -3,9 +3,10 @@ import { Search, ChevronDown, FileText, BookOpen, Scale, Gavel, FileSignature, B
 
 interface HeaderProps {
   onNavigate: (page: 'home' | 'contact') => void;
+  onMenuClick?: (menu: string) => void;
 }
 
-export default function Header({ onNavigate }: HeaderProps) {
+export default function Header({ onNavigate, onMenuClick }: HeaderProps) {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
 
   const menuItems = [
@@ -125,7 +126,10 @@ export default function Header({ onNavigate }: HeaderProps) {
             {menuItems.slice(0, 5).map((item, i) => (
               <button
                 key={i}
-                onClick={item.action}
+                onClick={e => {
+                  if (item.action) item.action();
+                  if (onMenuClick) onMenuClick && onMenuClick(item.label);
+                }}
                 className="font-bold text-xs uppercase tracking-widest text-gray-600 dark:text-gray-400 hover:text-amber-600 dark:hover:text-amber-500 transition-all relative group"
               >
                 {item.label}
@@ -133,10 +137,6 @@ export default function Header({ onNavigate }: HeaderProps) {
               </button>
             ))}
           </nav>
-
-          <button className="px-6 py-2.5 bg-amber-500 text-white hover:bg-amber-600 rounded-xl font-bold text-xs uppercase tracking-widest transition-all duration-300 shadow-lg shadow-amber-500/25 active:scale-95">
-            Get Started
-          </button>
         </div>
       </div>
 

@@ -1,13 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
-import { HistoryProvider } from './context/HistoryContext';
-import './index.css';
+import { AuthProvider } from './context/AuthContext'; // Import your AuthProvider
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <HistoryProvider>
+    <AuthProvider> {/* The Provider must be outside of App */}
       <App />
-    </HistoryProvider>
+    </AuthProvider>
   </React.StrictMode>
 );

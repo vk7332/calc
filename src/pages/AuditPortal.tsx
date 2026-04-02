@@ -55,11 +55,9 @@ export default function AuditPortal() {
 
     const handleSaveAudit = async () => {
         if (!result) return;
-
         try {
             // Generate PDF data
             const pdfData = await exportTaxReport(result, clientName || 'Quick Client', settings);
-
             // Save to history with full details
             await addRecord({
                 name: clientName || "Quick Client",
@@ -84,7 +82,6 @@ export default function AuditPortal() {
                 auditReport: result,
                 pdfData
             });
-
             toggleComparison(true);
             alert("Audit saved to cloud database!");
         } catch (error) {
