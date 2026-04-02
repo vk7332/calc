@@ -244,7 +244,7 @@ const CalculatorGrid: React.FC<CalculatorGridProps> = ({ isDark, onNavigate }) =
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 items-stretch">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 items-stretch px-4 max-w-7xl mx-auto">
                             {section.cards.map((card, index) => (
                                 <button
                                     key={index}
