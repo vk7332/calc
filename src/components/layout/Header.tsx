@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Search, ChevronDown, FileText, BookOpen, Scale, Gavel, FileSignature, Briefcase, Landmark, TrendingUp, CreditCard, Zap, Sparkles } from 'lucide-react';
+import { Search, ChevronDown, Home as HomeIcon, FileText, BookOpen, Scale, Gavel, FileSignature, Briefcase, Landmark, TrendingUp, CreditCard, Zap, Sparkles } from 'lucide-react';
 
 interface HeaderProps {
   onNavigate: (page: 'home' | 'contact') => void;
@@ -93,7 +93,7 @@ export default function Header({ onNavigate, onMenuClick }: HeaderProps) {
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full transition-colors duration-300 shadow-sm">
+    <header className="sticky top-0 z-[100] w-full transition-colors duration-300 shadow-sm">
       {/* Top Search Bar */}
       <div className="bg-blue-50 dark:bg-navy-glow/50 border-b border-blue-100 dark:border-blue-900/30 px-6 py-2 backdrop-blur-md">
         <div className="max-w-7xl mx-auto flex justify-center">
@@ -103,6 +103,7 @@ export default function Header({ onNavigate, onMenuClick }: HeaderProps) {
               type="text"
               placeholder="Ask Calc Ginni... (e.g., Income Tax, GST, or TDS)"
               className="w-full bg-white dark:bg-gray-800/80 border border-blue-200 dark:border-blue-900/50 rounded-xl py-2.5 pl-11 pr-4 text-sm text-gray-700 dark:text-gray-300 placeholder-gray-400 focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all shadow-sm"
+              style={{ zIndex: 110 }}
             />
           </div>
         </div>
@@ -122,8 +123,17 @@ export default function Header({ onNavigate, onMenuClick }: HeaderProps) {
             </div>
           </div>
 
+          {/* Always visible Home button */}
+          <button
+            onClick={() => onNavigate('home')}
+            className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white rounded-full font-bold text-xs uppercase tracking-widest shadow hover:bg-amber-600 transition-all border-2 border-white dark:border-gray-900 z-[101]"
+            style={{ marginLeft: 24 }}
+          >
+            <HomeIcon className="w-4 h-4" /> Home
+          </button>
+
           <nav className="flex-1 flex items-center justify-center gap-10">
-            {menuItems.slice(0, 5).map((item, i) => (
+            {menuItems.slice(1, 5).map((item, i) => (
               <button
                 key={i}
                 onClick={e => {
@@ -141,19 +151,19 @@ export default function Header({ onNavigate, onMenuClick }: HeaderProps) {
       </div>
 
       {/* Navigation & Mega Menu Bar */}
-      <div className="bg-navy-dark dark:bg-black border-b border-amber-500/30 px-8 relative">
+      <div className="bg-navy-dark dark:bg-black border-b border-amber-500/30 px-8 relative z-[101]">
         <nav className="max-w-7xl mx-auto flex items-center justify-center gap-1">
           {menuItems.map((item, i) => (
             <div
               key={i}
-              onMouseEnter={() => item.megaMenu && setActiveMenu(item.label)}
+              onMouseEnter={e => item.megaMenu && setActiveMenu(item.label)}
               onMouseLeave={() => setActiveMenu(null)}
               className="relative py-3.5 px-4"
+              style={{ zIndex: 102 }}
             >
               <button
                 onClick={item.action}
-                className={`text-[10px] font-bold uppercase tracking-[0.15em] transition-all flex items-center gap-2 ${activeMenu === item.label ? 'text-amber-400 scale-105' : 'text-gray-400 hover:text-amber-400'
-                  }`}
+                className={`text-[10px] font-bold uppercase tracking-[0.15em] transition-all flex items-center gap-2 ${activeMenu === item.label ? 'text-amber-400 scale-105' : 'text-gray-400 hover:text-amber-400'}`}
               >
                 {item.label}
                 {item.megaMenu && <ChevronDown className={`w-3 h-3 transition-transform duration-300 ${activeMenu === item.label ? 'rotate-180' : ''}`} />}
@@ -161,7 +171,9 @@ export default function Header({ onNavigate, onMenuClick }: HeaderProps) {
 
               {/* Mega Menu Dropdown */}
               {item.megaMenu && activeMenu === item.label && (
-                <div className="absolute left-1/2 -translate-x-1/2 top-full w-[calc(100vw-280px)] max-w-6xl bg-white dark:bg-gray-900 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.3)] dark:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.7)] border-t-2 border-amber-500 rounded-b-[2.5rem] p-10 animate-in fade-in zoom-in-95 slide-in-from-top-4 duration-300 z-50">
+                <div className="absolute left-1/2 top-full -translate-x-1/2 mt-2 w-[calc(100vw-280px)] max-w-6xl bg-white dark:bg-gray-900 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.3)] dark:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.7)] border-t-2 border-amber-500 rounded-b-[2.5rem] p-10 animate-in fade-in zoom-in-95 slide-in-from-top-4 duration-300 z-[200]"
+                  style={{ minWidth: 320 }}
+                >
                   <div className="grid grid-cols-3 gap-12">
                     {item.megaMenu.map((section, idx) => (
                       <div key={idx} className="space-y-6">

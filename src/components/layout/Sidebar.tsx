@@ -4,6 +4,7 @@ import { ChevronDown, ChevronRight, Calculator, CreditCard, TrendingUp, Shield, 
 interface SidebarProps {
   onNavigate: (page: string) => void;
   onMenuClick?: (menu: string) => void;
+  collapsed?: boolean;
 }
 
 interface Category {
@@ -13,7 +14,7 @@ interface Category {
   items: string[];
 }
 
-export default function Sidebar({ onNavigate, onMenuClick }: SidebarProps) {
+export default function Sidebar({ onNavigate, onMenuClick, collapsed = false }: SidebarProps) {
   const [expandedCategories, setExpandedCategories] = useState<string[]>(['tax-salary']);
 
   const categories: Category[] = [
@@ -56,6 +57,23 @@ export default function Sidebar({ onNavigate, onMenuClick }: SidebarProps) {
         : [...prev, categoryId]
     );
   };
+
+  if (collapsed) {
+    return (
+      <div className="flex flex-col items-center py-4 gap-4">
+        {categories.map((cat) => (
+          <button
+            key={cat.id}
+            onClick={() => onNavigate(cat.id)}
+            className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-blue-100 text-blue-600"
+            title={cat.title}
+          >
+            {cat.icon}
+          </button>
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className="fixed left-0 top-0 bottom-0 w-64 bg-white dark:bg-navy-dark border-r border-gray-200 dark:border-gray-800 overflow-y-auto overflow-x-hidden transition-colors duration-300 z-40">
