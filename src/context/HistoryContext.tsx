@@ -131,3 +131,15 @@ export const useHistory = () => {
     }
     return context;
 };
+
+export async function saveCalculation(data: any) {
+    await supabase.from("calculation_history").insert([
+        {
+            calculator_type: "court_fee",
+            state: data.state,
+            case_type: data.caseType,
+            amount: data.amount,
+            result_json: data
+        }
+    ]);
+}

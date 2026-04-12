@@ -1,0 +1,68 @@
+import { serve } from "https://deno.land/std/http/server.ts";
+
+serve(async () => {
+    const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+    const SUPABASE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+
+    // 📥 FETCH CASES
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/cases`, {
+        headers: {
+            apikey: SUPABASE_KEY!,
+            Authorization: `Bearer ${SUPABASE_KEY}`,
+        },
+    });
+
+    const cases = await res.json();
+
+    const today = new Date();
+
+    for (const c of cases) {
+        if (!c.next_date || !c.client_id) continue;
+
+        const nextDate = new Date(c.next_date);
+
+        const diff =
+            (nextDate.getTime() - today.getTime()) /
+            (1000 * 60 * 60 * 24);
+
+        if (diff > 0 && diff <= 1) {
+            // 📥 GET CLIENT
+            const clientRes = await fetch(
+                `${SUPABASE_URL}/rest/v1/clients?id=eq.${c.client_id}`,
+                {
+                    headers: {
+                        apikey: SUPABASE_KEY!,
+                        Authorization: `Bearer ${SUPABASE_KEY}`,
+                    },
+                }
+            );
+
+            const client = (await clientRes.json())[0];
+
+            if (!client?.phone) continue;
+
+            // 📲 SEND WHATSAPP (Twilio)
+            await fetch(
+                "https://api.twilio.com/2010-04-01/Accounts/YOUR_SID/Messages.json",
+                {
+                    method: "POST",
+                    headers: {
+                        Authorization:
+                            "Basic " +
+                            btoa("YOUR_SID:YOUR_AUTH_TOKEN"),
+                        "Content-Type":
+                            "application/x-www-form-urlencoded",
+                    },
+                    body: new URLSearchParams({
+                        To: `whatsapp:+91${client.phone}`,
+                        From: "whatsapp:+14155238886",
+                        Body: `⚖️ Reminder: ${c.title}
+Next Date: ${new Date(c.next_date).toLocaleDateString()}`,
+                    }),
+                }
+            );
+        }
+    }
+
+    return new Response("Reminders sent");
+});

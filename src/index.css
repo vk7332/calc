@@ -30,3 +30,29 @@
 .toolbox:hover {
   @apply shadow-xl border-amber-500/30;
 }
+
+@media print {
+  aside, header, nav, .sticky, button, .no-print, [title="Collapse Sidebar"], [title="Expand Sidebar"] {
+    display: none !important;
+  }
+  
+  main {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+  }
+
+  .flex {
+    display: block !important;
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  div {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+}

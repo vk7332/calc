@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChevronDown, ChevronRight, Calculator, CreditCard, TrendingUp, Shield, Briefcase } from 'lucide-react';
+import { ChevronDown, ChevronRight, Calculator, CreditCard, TrendingUp, Shield, Briefcase, Scale } from 'lucide-react';
 
 interface SidebarProps {
   onNavigate: (page: string) => void;
@@ -23,6 +23,12 @@ export default function Sidebar({ onNavigate, onMenuClick, collapsed = false }: 
       title: 'Tax & Salary',
       icon: <Calculator className="w-5 h-5" />,
       items: ['Income Tax Calc', 'HRA Exemption', 'Advance Tax', 'Gratuity Calculator', 'Bonus Calculator', 'TDS Calculator']
+    },
+    {
+      id: 'court-fees',
+      title: 'Court Fees',
+      icon: <Scale className="w-5 h-5" />,
+      items: ['Court Fee Calculator', 'Advocate Fee']
     },
     {
       id: 'emi-loans',
@@ -60,12 +66,12 @@ export default function Sidebar({ onNavigate, onMenuClick, collapsed = false }: 
 
   if (collapsed) {
     return (
-      <div className="flex flex-col items-center py-4 gap-4">
+      <div className="flex flex-col items-center py-6 gap-6 h-full bg-white dark:bg-slate-900">
         {categories.map((cat) => (
           <button
             key={cat.id}
             onClick={() => onNavigate(cat.id)}
-            className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-blue-100 text-blue-600"
+            className="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-amber-50 dark:hover:bg-amber-900/20 text-slate-500 dark:text-slate-400 hover:text-amber-600 dark:hover:text-amber-500 transition-all shadow-sm hover:shadow-md"
             title={cat.title}
           >
             {cat.icon}
@@ -76,12 +82,12 @@ export default function Sidebar({ onNavigate, onMenuClick, collapsed = false }: 
   }
 
   return (
-    <div className="fixed left-0 top-0 bottom-0 w-64 bg-white dark:bg-navy-dark border-r border-gray-200 dark:border-gray-800 overflow-y-auto overflow-x-hidden transition-colors duration-300 z-40">
-      <div className="flex flex-col min-h-full">
-        <div className="p-6 border-b border-gray-100 dark:border-gray-800 mb-6 flex-shrink-0 bg-white/80 dark:bg-navy-dark/80 backdrop-blur-md sticky top-0 z-10">
+    <div className="h-full bg-white dark:bg-slate-900 transition-colors duration-300">
+      <div className="flex flex-col h-full">
+        <div className="p-6 border-b border-gray-100 dark:border-gray-800 flex-shrink-0 bg-white dark:bg-slate-900">
           <button
             onClick={() => onNavigate('home')}
-            className="flex items-center gap-2 text-2xl font-bold text-navy-dark dark:text-white hover:opacity-80 transition-opacity"
+            className="flex items-center gap-2 text-xl font-bold text-slate-800 dark:text-white hover:opacity-80 transition-opacity"
           >
             <div className="w-8 h-8 bg-amber-500 rounded-lg flex items-center justify-center shadow-lg shadow-amber-500/20">
               <span className="text-white text-sm italic">VK</span>
@@ -95,80 +101,6 @@ export default function Sidebar({ onNavigate, onMenuClick, collapsed = false }: 
           <h3 className="px-4 mb-4 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500">
             TOOL CATEGORIES
           </h3>
-
-          {/* Quick Navigation Links */}
-          <div className="space-y-2 mb-4">
-            <button
-              onClick={() => onNavigate('database')}
-              className="w-full flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 font-bold text-sm hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-all"
-            >
-              📊 Dashboard
-            </button>
-            <button
-              onClick={() => onNavigate('analytics')}
-              className="w-full flex items-center gap-2 px-4 py-2 rounded-xl bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 font-bold text-sm hover:bg-purple-100 dark:hover:bg-purple-900/40 transition-all"
-            >
-              📈 Analytics
-            </button>
-            <button
-              onClick={() => onNavigate('settings')}
-              className="w-full flex items-center gap-2 px-4 py-2 rounded-xl bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300 font-bold text-sm hover:bg-orange-100 dark:hover:bg-orange-900/40 transition-all"
-            >
-              ⚙️ Settings
-            </button>
-            <button
-              onClick={() => onNavigate('help')}
-              className="w-full flex items-center gap-2 px-4 py-2 rounded-xl bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-300 font-bold text-sm hover:bg-yellow-100 dark:hover:bg-yellow-900/40 transition-all"
-            >
-              ❓ Help / FAQ
-            </button>
-            <button
-              onClick={() => onNavigate('about')}
-              className="w-full flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-50 dark:bg-gray-900/20 text-gray-700 dark:text-gray-300 font-bold text-sm hover:bg-gray-100 dark:hover:bg-gray-900/40 transition-all"
-            >
-              ℹ️ About
-            </button>
-            <button
-              onClick={() => {
-                if (navigator.share) {
-                  navigator.share({
-                    title: 'VKCalc.in – India Tax Suite',
-                    text: 'Try VKCalc.in for CA-grade tax tools, calculators, and analytics!',
-                    url: 'https://vkcalc.in'
-                  });
-                } else {
-                  window.open('https://vkcalc.in', '_blank');
-                }
-              }}
-              className="w-full flex items-center gap-2 px-4 py-2 rounded-xl bg-cyan-50 dark:bg-cyan-900/20 text-cyan-700 dark:text-cyan-300 font-bold text-sm hover:bg-cyan-100 dark:hover:bg-cyan-900/40 transition-all"
-            >
-              🔗 Share App
-            </button>
-            <button
-              onClick={() => window.open('tel:+917018064385')}
-              className="w-full flex items-center gap-2 px-4 py-2 rounded-xl bg-lime-50 dark:bg-lime-900/20 text-lime-700 dark:text-lime-300 font-bold text-sm hover:bg-lime-100 dark:hover:bg-lime-900/40 transition-all"
-            >
-              📞 Call Support
-            </button>
-            <button
-              onClick={() => window.open('https://wa.me/917018064385', '_blank')}
-              className="w-full flex items-center gap-2 px-4 py-2 rounded-xl bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 font-bold text-sm hover:bg-green-100 dark:hover:bg-green-900/40 transition-all"
-            >
-              📱 WhatsApp
-            </button>
-            <button
-              onClick={() => window.open('mailto:vkcalc.in@gmail.com', '_blank')}
-              className="w-full flex items-center gap-2 px-4 py-2 rounded-xl bg-pink-50 dark:bg-pink-900/20 text-pink-700 dark:text-pink-300 font-bold text-sm hover:bg-pink-100 dark:hover:bg-pink-900/40 transition-all"
-            >
-              ✉️ Email
-            </button>
-            <button
-              onClick={() => onNavigate('feedback')}
-              className="w-full flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 font-bold text-sm hover:bg-emerald-100 dark:hover:bg-emerald-900/40 transition-all"
-            >
-              💬 Feedback
-            </button>
-          </div>
 
           <div className="space-y-1">
             {categories.map((category) => {
@@ -203,7 +135,11 @@ export default function Sidebar({ onNavigate, onMenuClick, collapsed = false }: 
                           key={item}
                           className="w-full text-left px-8 py-2.5 rounded-r-xl text-xs font-bold transition-all duration-200 text-gray-500 dark:text-gray-500 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-amber-50/50 dark:hover:bg-amber-900/10"
                           onClick={() => {
-                            if (onMenuClick) onMenuClick(item);
+                            if (item === 'Court Fee Calculator') {
+                              onNavigate('court-fees');
+                            } else if (onMenuClick) {
+                              onMenuClick(item);
+                            }
                           }}
                         >
                           {item}

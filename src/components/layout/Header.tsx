@@ -93,77 +93,54 @@ export default function Header({ onNavigate, onMenuClick }: HeaderProps) {
   ];
 
   return (
-    <header className="sticky top-0 z-[100] w-full transition-colors duration-300 shadow-sm">
+    <header className="fixed top-0 left-0 right-0 z-[100] w-full transition-all duration-300 shadow-lg">
       {/* Top Search Bar */}
-      <div className="bg-blue-50 dark:bg-navy-glow/50 border-b border-blue-100 dark:border-blue-900/30 px-6 py-2 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto flex justify-center">
-          <div className="relative w-full max-w-2xl group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-amber-500 transition-colors" />
+      <div className="bg-blue-600 dark:bg-slate-900 border-b border-blue-500 dark:border-slate-800 px-6 py-3 backdrop-blur-md">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-6">
+          <div className="flex items-center gap-4 flex-shrink-0">
+            <div className="w-10 h-10 bg-white rounded-xl shadow-lg flex items-center justify-center group cursor-pointer overflow-hidden relative">
+              <span className="text-blue-600 font-black text-xl italic group-hover:scale-110 transition-transform">VK</span>
+            </div>
+            <div className="hidden sm:block">
+              <div className="text-sm font-black text-white leading-none mb-1 tracking-tight">VKCalc.in</div>
+              <div className="text-[9px] text-blue-200 font-bold uppercase tracking-[0.2em]">Tax Practitioner</div>
+            </div>
+          </div>
+          
+          <div className="relative w-full max-w-xl group">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-blue-300 group-focus-within:text-white transition-colors" />
             <input
               type="text"
-              placeholder="Ask Calc Ginni... (e.g., Income Tax, GST, or TDS)"
-              className="w-full bg-white dark:bg-gray-800/80 border border-blue-200 dark:border-blue-900/50 rounded-xl py-2.5 pl-11 pr-4 text-sm text-gray-700 dark:text-gray-300 placeholder-gray-400 focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all shadow-sm"
-              style={{ zIndex: 110 }}
+              placeholder="Search financial tools, tax rules, or laws..."
+              className="w-full bg-blue-700/50 dark:bg-slate-800 border border-blue-500/50 dark:border-slate-700 rounded-xl py-2 pl-11 pr-4 text-sm text-white placeholder-blue-300 focus:ring-4 focus:ring-white/10 focus:border-white transition-all outline-none"
             />
           </div>
-        </div>
-      </div>
 
-      {/* Main Header */}
-      <div className="bg-white/90 dark:bg-gray-900/90 border-b border-gray-100 dark:border-gray-800 px-8 py-4 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-8">
-          <div className="flex items-center gap-4">
-            <div className="w-11 h-11 bg-amber-500 rounded-xl shadow-lg shadow-amber-500/20 flex items-center justify-center group cursor-pointer overflow-hidden relative">
-              <span className="text-white font-bold text-xl italic group-hover:scale-110 transition-transform">VK</span>
-              <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-            </div>
-            <div>
-              <div className="text-sm font-bold text-navy-dark dark:text-white leading-none mb-1">VKCalc.in</div>
-              <div className="text-[9px] text-amber-600 dark:text-amber-500 font-bold uppercase tracking-[0.2em]">Income Tax Practitioner</div>
-            </div>
+          <div className="flex items-center gap-3 flex-shrink-0">
+            <button
+              onClick={() => onNavigate('home')}
+              className="p-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors"
+              title="Home"
+            >
+              <HomeIcon size={20} />
+            </button>
           </div>
-
-          {/* Always visible Home button */}
-          <button
-            onClick={() => onNavigate('home')}
-            className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white rounded-full font-bold text-xs uppercase tracking-widest shadow hover:bg-amber-600 transition-all border-2 border-white dark:border-gray-900 z-[101]"
-            style={{ marginLeft: 24 }}
-          >
-            <HomeIcon className="w-4 h-4" /> Home
-          </button>
-
-          <nav className="flex-1 flex items-center justify-center gap-10">
-            {menuItems.slice(1, 5).map((item, i) => (
-              <button
-                key={i}
-                onClick={e => {
-                  if (item.action) item.action();
-                  if (onMenuClick) onMenuClick && onMenuClick(item.label);
-                }}
-                className="font-bold text-xs uppercase tracking-widest text-gray-600 dark:text-gray-400 hover:text-amber-600 dark:hover:text-amber-500 transition-all relative group"
-              >
-                {item.label}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-amber-500 group-hover:w-full transition-all duration-300"></span>
-              </button>
-            ))}
-          </nav>
         </div>
       </div>
 
-      {/* Navigation & Mega Menu Bar */}
-      <div className="bg-navy-dark dark:bg-black border-b border-amber-500/30 px-8 relative z-[101]">
-        <nav className="max-w-7xl mx-auto flex items-center justify-center gap-1">
+      {/* Navigation Bar */}
+      <div className="bg-white/95 dark:bg-slate-900/95 border-b border-gray-200 dark:border-slate-800 px-6 backdrop-blur-md">
+        <nav className="max-w-7xl mx-auto flex items-center justify-center gap-2">
           {menuItems.map((item, i) => (
             <div
               key={i}
-              onMouseEnter={e => item.megaMenu && setActiveMenu(item.label)}
+              onMouseEnter={() => item.megaMenu && setActiveMenu(item.label)}
               onMouseLeave={() => setActiveMenu(null)}
-              className="relative py-3.5 px-4"
-              style={{ zIndex: 102 }}
+              className="relative"
             >
               <button
                 onClick={item.action}
-                className={`text-[10px] font-bold uppercase tracking-[0.15em] transition-all flex items-center gap-2 ${activeMenu === item.label ? 'text-amber-400 scale-105' : 'text-gray-400 hover:text-amber-400'}`}
+                className={`px-4 py-4 text-[11px] font-bold uppercase tracking-widest transition-all flex items-center gap-2 border-b-2 ${activeMenu === item.label ? 'text-blue-600 border-blue-600' : 'text-slate-500 border-transparent hover:text-blue-600'}`}
               >
                 {item.label}
                 {item.megaMenu && <ChevronDown className={`w-3 h-3 transition-transform duration-300 ${activeMenu === item.label ? 'rotate-180' : ''}`} />}
@@ -171,26 +148,24 @@ export default function Header({ onNavigate, onMenuClick }: HeaderProps) {
 
               {/* Mega Menu Dropdown */}
               {item.megaMenu && activeMenu === item.label && (
-                <div className="absolute left-1/2 top-full -translate-x-1/2 mt-2 w-[calc(100vw-280px)] max-w-6xl bg-white dark:bg-gray-900 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.3)] dark:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.7)] border-t-2 border-amber-500 rounded-b-[2.5rem] p-10 animate-in fade-in zoom-in-95 slide-in-from-top-4 duration-300 z-[200]"
-                  style={{ minWidth: 320 }}
-                >
-                  <div className="grid grid-cols-3 gap-12">
+                <div className="fixed left-1/2 -translate-x-1/2 top-[108px] w-screen max-w-5xl bg-white dark:bg-slate-900 shadow-2xl border-x border-b border-slate-100 dark:border-slate-800 rounded-b-3xl p-8 animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-300 z-[110]">
+                  <div className="grid grid-cols-3 gap-10">
                     {item.megaMenu.map((section, idx) => (
-                      <div key={idx} className="space-y-6">
-                        <div className="flex items-center gap-3 pb-4 border-b border-gray-100 dark:border-gray-800">
-                          <div className="p-2.5 rounded-xl bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 shadow-sm">
+                      <div key={idx} className="space-y-4">
+                        <div className="flex items-center gap-3 pb-3 border-b border-slate-50 dark:border-slate-800">
+                          <div className="p-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400">
                             {section.icon}
                           </div>
-                          <h3 className="font-bold text-xs text-navy-dark dark:text-white uppercase tracking-[0.2em]">{section.title}</h3>
+                          <h3 className="font-bold text-[10px] text-slate-800 dark:text-white uppercase tracking-widest">{section.title}</h3>
                         </div>
-                        <ul className="space-y-3">
+                        <ul className="space-y-2">
                           {section.links.map((link, linkIdx) => (
                             <li key={linkIdx}>
                               <a
                                 href="#"
-                                className="text-[11px] text-gray-500 dark:text-gray-400 hover:text-amber-600 dark:hover:text-amber-500 transition-colors block font-bold leading-relaxed group flex items-center gap-2"
+                                className="text-[11px] text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors block font-medium flex items-center gap-2 group"
                               >
-                                <span className="w-1 h-1 rounded-full bg-amber-500 opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                                <span className="w-1 h-1 rounded-full bg-blue-600 opacity-0 group-hover:opacity-100 transition-opacity"></span>
                                 {link}
                               </a>
                             </li>
@@ -203,10 +178,6 @@ export default function Header({ onNavigate, onMenuClick }: HeaderProps) {
               )}
             </div>
           ))}
-          <div className="h-4 w-px bg-white/10 mx-4"></div>
-          <button className="px-5 py-1.5 bg-amber-500 text-white rounded-full font-bold text-[9px] uppercase tracking-[0.2em] hover:bg-white hover:text-amber-600 transition-all shadow-lg shadow-amber-500/20 active:scale-95">
-            File ITR
-          </button>
         </nav>
       </div>
     </header>

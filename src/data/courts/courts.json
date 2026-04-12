@@ -1,0 +1,59 @@
+{
+    "HP": {
+        "name": "Himachal Pradesh",
+        "districts": {
+            "Mandi": {
+                "code": "MD",
+                "courts": [
+                    {
+                        "name": "Civil Judge (Junior Division)",
+                        "code": "CJJD"
+                    },
+                    {
+                        "name": "Civil Judge (Senior Division)",
+                        "code": "CJSD"
+                    },
+                    {
+                        "name": "Chief Judicial Magistrate",
+                        "code": "CJM"
+                    },
+                    {
+                        "name": "District & Sessions Court",
+                        "code": "DSC"
+                    }
+                ]
+            },
+            "Shimla": {
+                "code": "SH",
+                "courts": [
+                    {
+                        "name": "Civil Judge (Junior Division)",
+                        "code": "CJJD"
+                    },
+                    {
+                        "name": "District Court Shimla",
+                        "code": "DSC"
+                    }
+                ]
+            }
+        }
+    },
+    "PB": {
+        "name": "Punjab",
+        "districts": {
+            "Ludhiana": {
+                "code": "LDH",
+                "courts": [
+                    {
+                        "name": "Civil Judge",
+                        "code": "CJ"
+                    },
+                    {
+                        "name": "Sessions Court",
+                        "code": "SC"
+                    }
+                ]
+            }
+        }
+    }
+}

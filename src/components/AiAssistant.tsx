@@ -8,7 +8,7 @@ interface Message {
     timestamp: Date;
 }
 
-export default function AIAssistant() {
+export default function AIAssistant({ onContactTrigger }: { onContactTrigger?: () => void }) {
     const [messages, setMessages] = useState<Message[]>([
         {
             id: '1',
@@ -19,6 +19,15 @@ export default function AIAssistant() {
     ]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+
+    const isUnsatisfactory = (content: string) => {
+        const triggers = [
+            'sorry', 'apologize', 'cannot answer', 'do not know', 
+            'unable to', 'technical error', 'no information',
+            'contact a professional', 'consult a ca'
+        ];
+        return triggers.some(t => content.toLowerCase().includes(t));
+    };
 
     const sendMessage = async () => {
         if (!input.trim()) return;
@@ -46,7 +55,7 @@ export default function AIAssistant() {
                     messages: [
                         {
                             role: 'system',
-                            content: 'You are a professional tax assistant for Indian income tax. Provide accurate, helpful advice about tax calculations, deductions, filing procedures, and compliance. Always remind users to consult a qualified tax professional for personalized advice.'
+                            content: 'You are a professional tax assistant for Indian income tax. Provide accurate, helpful advice about tax calculations, deductions, filing procedures, and compliance. If you are unsure or cannot provide a specific answer, politely suggest the user contact our specialist team.'
                         },
                         ...messages.map(m => ({ role: m.role, content: m.content })),
                         { role: 'user', content: input }
@@ -64,11 +73,21 @@ export default function AIAssistant() {
             };
 
             setMessages(prev => [...prev, aiMessage]);
+
+            if (isUnsatisfactory(aiMessage.content)) {
+                const triggerMessage: Message = {
+                    id: (Date.now() + 2).toString(),
+                    role: 'assistant',
+                    content: 'It seems I couldn\'t provide a fully satisfactory answer. Would you like to connect with our professional tax specialists directly?',
+                    timestamp: new Date()
+                };
+                setMessages(prev => [...prev, triggerMessage]);
+            }
         } catch {
             const errorMessage: Message = {
                 id: (Date.now() + 1).toString(),
                 role: 'assistant',
-                content: 'Sorry, I encountered an error. Please try again later.',
+                content: 'Sorry, I encountered an error. Please try again later or contact our specialist team for direct assistance.',
                 timestamp: new Date()
             };
             setMessages(prev => [...prev, errorMessage]);
@@ -86,7 +105,7 @@ export default function AIAssistant() {
                         className={`flex gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                     >
                         <div className={`flex gap-2 max-w-[80%] ${message.role === 'user' ? 'flex-row-reverse' : ''}`}>
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${message.role === 'user'
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${message.role === 'user'
                                     ? 'bg-blue-600'
                                     : 'bg-green-600'
                                 }`}>
@@ -98,10 +117,18 @@ export default function AIAssistant() {
                             </div>
                             <div className={`rounded-lg p-3 ${message.role === 'user'
                                     ? 'bg-blue-600 text-white'
-                                    : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white'
+                                    : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm'
                                 }`}>
                                 <p className="text-sm">{message.content}</p>
-                                <p className="text-xs opacity-70 mt-1">
+                                {(message.content.includes('connect with our professional tax specialists') || message.content.includes('contact our specialist team')) && (
+                                    <button 
+                                        onClick={onContactTrigger}
+                                        className="mt-3 w-full py-2 bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-black uppercase tracking-widest rounded-lg transition-all shadow-md flex items-center justify-center gap-2"
+                                    >
+                                        Connect with Specialists
+                                    </button>
+                                )}
+                                <p className="text-[10px] opacity-70 mt-2 font-medium">
                                     {message.timestamp.toLocaleTimeString()}
                                 </p>
                             </div>

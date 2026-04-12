@@ -1,0 +1,212 @@
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+
+/* ================================
+   INTERFACES
+================================ */
+
+export interface TaxReportRow {
+    label: string;
+    value: string | number;
+}
+
+export interface TaxReportData {
+    title: string;
+    subtitle?: string;
+    generatedOn?: string;
+    rows: TaxReportRow[];
+    footerNote?: string;
+}
+
+export interface CourtFeeBreakdown {
+    courtFee: number;
+    filingFee: number;
+    processFee: number;
+    applicationFee: number;
+    affidavitFee: number;
+    notaryFee: number;
+    vakalatnamaFee: number;
+    total: number;
+}
+
+export interface AdvocateProfile {
+    name: string;
+    chamberName?: string;
+    contact?: string;
+    email?: string;
+    address?: string;
+    logoUrl?: string;
+}
+
+/* ================================
+   HELPER FUNCTION
+================================ */
+
+const formatCurrency = (amount: number): string => {
+    return `₹ ${amount.toFixed(2)}`;
+};
+
+/* ================================
+   EXPORT TAX REPORT
+================================ */
+
+export const exportTaxReport = (data: TaxReportData): void => {
+    const doc = new jsPDF();
+
+    // Title
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(16);
+    doc.text(data.title, 14, 20);
+
+    // Subtitle
+    if (data.subtitle) {
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(12);
+        doc.text(data.subtitle, 14, 28);
+    }
+
+    // Generated Date
+    if (data.generatedOn) {
+        doc.setFontSize(10);
+        doc.text(`Generated On: ${data.generatedOn}`, 14, 36);
+    }
+
+    // Table Data
+    const tableData = data.rows.map((row) => [
+        row.label,
+        row.value.toString(),
+    ]);
+
+    autoTable(doc, {
+        startY: 42,
+        head: [["Particulars", "Amount"]],
+        body: tableData,
+        theme: "grid",
+        styles: {
+            fontSize: 10,
+        },
+        headStyles: {
+            fillColor: [41, 128, 185],
+            textColor: 255,
+            fontStyle: "bold",
+        },
+    });
+
+    // Footer Note
+    if (data.footerNote) {
+        const finalY = (doc as any).lastAutoTable.finalY || 60;
+        doc.setFontSize(10);
+        doc.text(data.footerNote, 14, finalY + 10);
+    }
+
+    // Save PDF
+    doc.save(`${data.title.replace(/\s+/g, "_")}.pdf`);
+};
+
+/* ================================
+   EXPORT COURT FEE REPORT
+================================ */
+
+export const exportCourtFeeReport = (
+    breakdown: CourtFeeBreakdown,
+    caseDetails: {
+        caseType: string;
+        courtName: string;
+        state: string;
+        filingDate?: string;
+    },
+    advocate?: AdvocateProfile
+): void => {
+    const doc = new jsPDF();
+
+    // Header – Advocate Branding
+    if (advocate) {
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(14);
+        doc.text(
+            advocate.chamberName || "VK Tax & Law Chamber®",
+            14,
+            15
+        );
+
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(10);
+        doc.text(`Advocate: ${advocate.name}`, 14, 21);
+
+        if (advocate.contact) {
+            doc.text(`Contact: ${advocate.contact}`, 14, 27);
+        }
+
+        if (advocate.email) {
+            doc.text(`Email: ${advocate.email}`, 14, 33);
+        }
+    } else {
+        doc.setFontSize(14);
+        doc.text("VK Tax & Law Chamber®", 14, 15);
+    }
+
+    // Title
+    doc.setFontSize(16);
+    doc.setFont("helvetica", "bold");
+    doc.text("Court Fee Calculation Report", 14, 45);
+
+    // Case Details
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(11);
+    doc.text(`Case Type: ${caseDetails.caseType}`, 14, 55);
+    doc.text(`Court: ${caseDetails.courtName}`, 14, 62);
+    doc.text(`State: ${caseDetails.state}`, 14, 69);
+
+    if (caseDetails.filingDate) {
+        doc.text(`Filing Date: ${caseDetails.filingDate}`, 14, 76);
+    }
+
+    // Fee Table
+    autoTable(doc, {
+        startY: 85,
+        head: [["Particulars", "Amount (₹)"]],
+        body: [
+            ["Court Fee", formatCurrency(breakdown.courtFee)],
+            ["Filing Fee", formatCurrency(breakdown.filingFee)],
+            ["Process Fee", formatCurrency(breakdown.processFee)],
+            ["Application Fee", formatCurrency(breakdown.applicationFee)],
+            ["Affidavit Fee", formatCurrency(breakdown.affidavitFee)],
+            ["Notary Fee", formatCurrency(breakdown.notaryFee)],
+            ["Vakalatnama Fee", formatCurrency(breakdown.vakalatnamaFee)],
+            ["Total", formatCurrency(breakdown.total)],
+        ],
+        theme: "grid",
+        styles: { fontSize: 10 },
+        headStyles: {
+            fillColor: [22, 160, 133],
+            textColor: 255,
+            fontStyle: "bold",
+        },
+        footStyles: {
+            fillColor: [240, 240, 240],
+            textColor: 0,
+            fontStyle: "bold",
+        },
+    });
+
+    // Footer
+    const pageHeight = doc.internal.pageSize.height;
+    doc.setFontSize(10);
+    doc.text(
+        "Generated by SUITCASE – Court Fee & Case Manager Suite",
+        14,
+        pageHeight - 20
+    );
+    doc.text(
+        "Built by VK Tax & Law Chamber®",
+        14,
+        pageHeight - 14
+    );
+
+    // Signature
+    doc.text("Authorized Signatory", 150, pageHeight - 20);
+    doc.text("VIPIN KUMAR TAMRA", 150, pageHeight - 14);
+
+    // Save PDF
+    doc.save("Court_Fee_Report.pdf");
+};
